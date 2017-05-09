@@ -1,0 +1,14 @@
+{%extends 'accounts/user/profile.html'%}
+{%block content%}
+{%if questions%}
+<h3>Questions Asked By You</h3>
+	{%for q in questions%}
+		<div>
+			<h3><b>{{q.title}}</b></h3>
+			<p>{{q.content}}</p>
+		</div>
+	{%endfor%}
+{%else%}
+	<div><h3>No Question Asked By You.</h3></div>
+{%endif%}	
+{%endblock%}								

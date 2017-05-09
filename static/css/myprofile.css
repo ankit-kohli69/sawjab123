@@ -1,0 +1,45 @@
+.search-box{
+			width:513px;
+			height:auto;
+			background: #fff;
+			position:absolute;
+			margin:0;
+			border-radius:5px;
+			padding:0;
+			z-index:100;
+		}
+		ul.search-box li{
+			list-style: none;
+			line-height:25px;
+			border-top:1px solid #000;
+			margin:0;
+			padding:2.5px 10px 2.5px 10px;
+		}
+		
+		.close-X{
+			cursor:pointer;
+			position: absolute;
+			top:5px;
+			right:5px;
+			font-size:20px;
+		}
+		.modal-box{
+			margin:auto;
+			position:absolute;
+			top:100px;
+			width:600px;
+			height:auto;
+			padding:10px;
+			margin-left:100%;
+			z-index: 1000;
+			display: none;
+			border-radius:5px;
+			background: #fff;
+		}
+		button.submit{
+			position:relative;
+			bottom:5px;
+			top:80px;
+			right:10px;
+			float:right
+		}

@@ -1,0 +1,101 @@
+{%extends 'master.html'%}
+{%block title%}
+	{{block.super}} | Main
+{%endblock%}
+{%block body%}
+<div class="container-fluid">
+	<div class="row">			
+		<div class="col-md-6 col-md-offset-3">
+			<div>
+			{%if lans%}
+			{%for obj in lans%}
+				<h3><b>{{obj.question.title}}</b></h3>
+				<p>Answered By <a href="{%url 'accounts:profile' obj.user%}"><b>{{obj.user}}</b></a></p>
+				<p>{{obj.content}}</p>
+				<a class="like" href="#" id="{{obj.id}}" data-action="{%if user in obj.likes.all%}un{%endif%}like" data-id="{{obj.id}}">
+					{%if user in obj.likes.all%}
+						Unlike
+					{%else%}
+						Like
+					{%endif%}
+				</a>&nbsp;&nbsp;
+				<a class="comment" href="#" data-id="{{obj.id}}" id={{obj.id}}>Comment</a>
+				<h6><span><b id="like-count-{{obj.id}}">{{obj.likes.count}}</b>&nbsp;Like{%if obj.likes.count > 1%}s{%endif%}</span>&nbsp;&nbsp;<span><b id="comment-count-{{obj.id}}">{{obj.comments.count}}</b>&nbsp;Comment{%if obj.comments.count > 1%}s{%endif%}</span></h6>
+				<span class="add_comment-{{obj.id}}"></span>
+			{%endfor%}		
+			{%endif%}	
+			</div>
+		</div>
+	</div>
+</div>
+{%endblock%}
+{%block scripts%}
+<script>
+		$(document).ready(function(){
+			$("a.comment").on("click",function(e){
+				e.preventDefault();
+				var id=$(this).data("id");
+				if($(".add_comment-"+id).val()==true){
+					$(".add_comment-"+id).val(false);
+					$(".add_comment-"+id).empty();
+				}else{
+					html="<input type='text' name='comment_content'><button data-id="+id+" id='comment_submit' class='btn btn-sm btn-success'>Add Comment</button>";
+					$.ajax({
+						url:"{%url 'main:get_answer_comment'%}",
+						method:"get",
+						data:{id:id},
+						success:function(data){
+							console.log(data.comments.length);
+							if(data.comments.length>0){
+								for(var i=0;i<data["comments"].length;i++){
+									html+="<p><a href='account/profile/'"+data.comments[i].username+"'>"+data.comments[i].username+"</a></p><h6>"+data.comments[i].content+"</h6>";
+								}
+							}else{
+								html+="<h6>No comments yet.</h6>";
+							}
+							$(".add_comment-"+id).html(html);
+							$(".add_comment-"+id).val(true);
+						}
+					});	
+				}
+			});
+			$(document).on("click","button#comment_submit",function(e){
+				e.preventDefault();
+				var id=$(this).data("id");
+				var content=$("input[name=comment_content]").val();
+				if(content){
+					$.ajax({
+						url:"{%url 'main:answer_comment'%}",
+						method:"get",
+						data:{id:id,content:content},
+						success:function(data){
+							if(data["status"]=="ok"){
+								$(".add_comment-"+id).empty();
+								$("h6 span b#comment-count-"+id).text(data["count"]);
+							}
+
+						}
+					});
+				}
+			});
+			$("a.like").on("click",function(e){
+				e.preventDefault();
+				var id=$(this).data("id");
+				var action=$(this).data("action");
+				$.ajax({
+					url:"{%url 'main:answer_like'%}",
+					method:"get",
+					data:{id:id,action:action},
+					success:function(data){
+						if(data["status"]=="ok"){
+							$("a.like#"+id).data("action",action=="like"?"unlike":"like");
+							$("a.like#"+id).text(action=="like"?"Unlike":"Like");
+							$("h6 span b#like-count-"+id).text(data["count"]);
+						}	
+					}
+				});
+			});
+			
+		});
+</script>
+{%endblock%}

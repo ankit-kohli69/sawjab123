@@ -1,0 +1,86 @@
+{%extends 'master.html'%}
+{%block stylesheets%}
+	{% load staticfiles %}	
+	<link rel="stylesheet" href="{%static 'css/myprofile.css'%}">
+{%endblock%}
+
+{%block body%}
+		<div class="container">
+			<div class="row">
+				<div class="col-md-3">
+					{%if user.userprofile.image%}
+					<img src="{{user.userprofile.image}}" width="170" height="170" style="border-radius:100%">
+					{%else%}
+					<img src="/media/profile_image/noimage.jpg" width="170" height="170" style="border-radius:100%">
+					{%endif%}
+					
+					<h4>{{user}}</h4>
+
+					{%if user.userprofile.first_name and user.userprofile.last_name%}
+						<h3>{{user.first_name}} {{user.last_name}}</h3>
+					{%else%}
+						<h3><a href="#" id="add_name">Add Name</a></h3>
+						<div class="modal-box name">
+							<h3>Add Name</h3>
+								<div class="row">
+										<div class="col-md-3">
+												<label>First Name:</label><input type="text" name="first_name">
+												<label>Last Name:</label><input type="text" name="last_name">
+										</div>
+										<span class="close-X">X</span>
+										<button class="btn btn-success submit" id="add_name_submit">Submit</button>
+									
+								</div>
+						</div>	
+					{%endif%}
+
+					<h5>{{user.email}}</h5>
+
+					{%if user.userprofile.description%}
+						<h3>{{user.userprofile.description}}</h3>
+					{%else%}
+						<p><a href="#" id="add_description">Add Description</a></p>
+						<div class="modal-box desc">
+							<h3>Add Description</h3>
+								<div class="row">
+										<div class="col-md-3">
+												<label>Description:</label><textarea rows="6" cols="25" name="first_name"></textarea>
+										</div>
+										<span class="close-X">X</span>
+										<button class="btn btn-success submit" id="add_description_submit">Submit</button>
+									
+								</div>
+						</div>
+					{%endif%}
+					
+					{%if user.userprofile.website%}
+						<h3>{{user.userprofile.website}}</h3>
+					{%else%}
+						<p><a href="#" id="add_url">Add Website</a></p>
+					{%endif%}
+
+					{%if user.userprofile.contact%}
+						<h3>{{user.userprofile.contact}}</h3>
+					{%else%}
+						<p><a href="#" id="add_url">Add Contact</a></p>
+					{%endif%}
+					
+					{%if user.userprofile.city and user.userprofile.location%}
+						<p>From {{user.userprofile.city}},{{user.userprofile.location}}</p>
+					{%else%}
+						<p><a href="#" id="add_url">Add Location</a></p>
+					{%endif%}
+					<p><a href="{%url 'accounts:profile' user%}">Answers({{count.answers}})</a></p>
+					<p><a href="{%url 'accounts:profile-questions' user%}">Questions({{count.questions}})</a></p>
+					<p><a href="{%url 'accounts:profile-following' user%}">Following({{user.userprofile.follow.count}})</a></p>
+					<p class="count-followers"><a href="{%url 'accounts:profile-followers' user%}">Followers({{count.followers}})</a></p>
+				</div>
+				<div class="col-md-9">
+					{%block content%}{%endblock%}	
+				</div>
+			</div>
+		</div>
+{%endblock%}
+{%block scripts%}	
+<script src="{%static 'js/user-profile.js'%}"></script>
+{%endblock%}

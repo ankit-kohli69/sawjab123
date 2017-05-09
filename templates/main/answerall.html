@@ -1,0 +1,211 @@
+{%extends 'master.html'%}
+{%block title%}
+	{{block.super}} | {{title}}
+{%endblock%}
+{%block stylesheets%}
+<style>
+.answer{
+	padding:5px;
+	margin:10px 0px;
+	background: #ebe6f2;
+}
+span.glyphicon.glyphicon-edit{
+	cursor:pointer;
+}
+.topic{
+	width:46%;
+	position:absolute;
+	left:27%;
+	top:170px;
+	min-height:300px;
+	border-radius:5px;
+	padding:5px 10px;
+	display: none;
+	z-index:100;
+	background: #fff;
+}
+.topic input{
+	width:95%;
+	border-radius: 3px;
+	border: 1px solid gray;
+}
+.topic span{
+	top:7px;
+	right:7px;
+	position: absolute;
+	cursor: pointer;
+}
+.topic button{
+	position: absolute;
+	bottom:10px;
+	right:10px;
+}
+</style>
+{%endblock%}
+{%block body%}
+<div class="container-fluid">
+	<div class="row">
+		<div class="col-md-9 col-md-offset-1">
+			<h3>{{question}}</h3>
+			<a class="btn btn-sm btn-default" href="{%url 'main:answer_create' question.id%}">Answer</a>&nbsp;&nbsp;<h6 style="display:inline;"><a class="follow" id="{{question.id}}" data-id="{{question.id}}" data-action="{%if user in question.followers.all%}un{%endif%}follow" href="#">
+				{%if user in question.followers.all%}	
+					Unfollow
+				{%else%}
+					Follow
+				{%endif%}
+				({{question.followers.count}})</a></h6>&nbsp;&nbsp;<span class="glyphicon glyphicon-edit"></span><br>
+			<h3>{{results.count}} Answer{%if results.count > 1 %}s{%endif%}</h3>	
+			{%for obj in results%}
+			<div class="answer">
+				<p>Answered By <a href="{%url 'accounts:profile' obj.user%}">{{obj.user}}</a></p>
+				<p>{{obj.content}}</p>
+				<!-- <h5>By {{obj.user_id}} {%if obj.user_id == user%}|Edit|Delete{%endif%}</h5> -->
+				<h6>{{obj.timestamp}}</h6>
+				<a class="like" href="#" id="{{obj.id}}" data-action="{%if user in obj.likes.all%}un{%endif%}like" data-id="{{obj.id}}">
+					{%if user in obj.likes.all%}
+						Unlike
+					{%else%}
+						Like
+					{%endif%}
+				</a>&nbsp;&nbsp;
+				<a class="comment" href="#" data-id="{{obj.id}}" id={{obj.id}}>Comment</a>
+				<h6><span><b id="like-count-{{obj.id}}">{{obj.likes.count}}</b>&nbsp;Like{%if obj.likes.count > 1%}s{%endif%}</span>&nbsp;&nbsp;<span><b id="comment-count-{{obj.id}}">{{obj.comments.count}}</b>&nbsp;Comment{%if obj.comments.count > 1%}s{%endif%}</span></h6>
+				<span class="add_comment-{{obj.id}}"></span>
+			</div>	
+			{%empty%}
+				<h3>No answer to this question yet! <br>Submit your <a href='{%url "main:answer_create" question.id %}'>answer</a> now.</h3>
+			{%endfor%}
+		</div>
+	</div>
+</div>
+<div class="topic">
+	<h3>Edit Topics</h3>
+	<h5>Topics are used to find the best experts to answer the question.</h5>
+	<input type="text" name="topic" placeholder="Select Topic">
+	
+</datalist>
+	<div>
+		<p><b>x</b>&nbsp;&nbsp;Computer Science</p>
+		<p><b>x</b>&nbsp;&nbsp;Programming</p>
+		<p><b>x</b>&nbsp;&nbsp;Algorithms</p>
+		<p><b>x</b>&nbsp;&nbsp;Computer Science</p>
+		<p><b>x</b>&nbsp;&nbsp;Programming</p>
+		<p><b>x</b>&nbsp;&nbsp;Algorithms</p>
+		<p><b>x</b>&nbsp;&nbsp;Computer Science</p>
+		<p><b>x</b>&nbsp;&nbsp;Programming</p>
+		<p><b>x</b>&nbsp;&nbsp;Algorithms</p>
+		<p><b>x</b>&nbsp;&nbsp;Computer Science</p>
+		<p><b>x</b>&nbsp;&nbsp;Programming</p>
+		<p><b>x</b>&nbsp;&nbsp;Algorithms</p>
+	</div>
+	<span>X</span>
+	<button class="btn btn-success btn-sm submit" name="topic_submit">Submit</button>
+</div>	
+{%endblock%}	
+{%block scripts%}			
+	<script>
+		$(document).ready(function(){
+			$("a.follow").click(function(e){
+				e.preventDefault();
+				id=$(this).data('id');
+				action=$(this).data('action');
+				$.ajax({
+					url:"{%url 'main:question_followers'%}",
+					method:"get",
+					data:{id:id,action:action},
+					success:function(data){
+						if(data["status"]="ok")
+						{
+							$("a.follow#"+id).data("action",action=="follow"?"unfollow":"follow");
+							$("a.follow#"+id).text(action=="follow"?"Unfollow("+data["count"]+")":"Follow("+data["count"]+")");
+						}
+					}
+				})
+			});
+
+			$("a.comment").on("click",function(e){
+				var id=$(this).data("id");
+				e.preventDefault();
+				if($(".add_comment-"+id).val()==true){
+					$(".add_comment-"+id).val(false);
+					$(".add_comment-"+id).empty();
+				}else{
+					html="<input type='text' name='comment_content'><button data-id="+id+" id='comment_submit' class='btn btn-sm btn-success'>Add Comment</button>";
+					$.ajax({
+						url:"{%url 'main:get_answer_comment'%}",
+						method:"get",
+						data:{id:id},
+						success:function(data){
+							console.log(data.comments.length);
+							if(data.comments.length>0){
+								for(var i=0;i<data["comments"].length;i++){
+									html+="<p><a href='account/profile/'"+data.comments[i].username+"'>"+data.comments[i].username+"</a></p><h6>"+data.comments[i].content+"</h6>";
+								}
+							}else{
+								html+="<h6>No comments yet.</h6>";
+							}
+							$(".add_comment-"+id).html(html);
+							$(".add_comment-"+id).val(true);
+						}
+					});	
+				}
+			});
+			$(document).on("click","button#comment_submit",function(e){
+				e.preventDefault();
+				var id=$(this).data("id");
+				var content=$("input[name=comment_content]").val();
+				if(content){
+					$.ajax({
+						url:"{%url 'main:answer_comment'%}",
+						method:"get",
+						data:{id:id,content:content},
+						success:function(data){
+							if(data["status"]=="ok"){
+								$(".add_comment-"+id).empty();
+								$("h6 span b#comment-count-"+id).text(data["count"]);
+							}
+
+						}
+					});
+				}
+			});
+			$("a.like").on("click",function(e){
+				e.preventDefault();
+				var id=$(this).data("id");
+				var action=$(this).data("action");
+				$.ajax({
+					url:"{%url 'main:answer_like'%}",
+					method:"get",
+					data:{id:id,action:action},
+					success:function(data){
+						if(data["status"]=="ok"){
+							$("a.like#"+id).data("action",action=="like"?"unlike":"like");
+							$("a.like#"+id).text(action=="like"?"Unlike":"Like");
+							$("h6 span b#like-count-"+id).text(data["count"]);
+						}	
+					}
+				});
+			});
+			$("span.glyphicon.glyphicon-edit").on("click",function(){
+				$(".topic").fadeIn();
+				$('#dialog-box').fadeIn();
+			});
+			$("#dialog-box,.topic span").click(function(){
+				$(".topic").fadeOut();
+				$(".topic input[type=text]").val("");
+				$('#dialog-box').fadeOut();
+			});
+			$("button[name=topic_submit]").on("click",function(){
+				var topic=$("input[name=topic]").val();
+				if(topic){
+					
+				}
+			});
+			$(".topic input[type=text]").on("keyup",function(){
+				var topic=$(".topic input[type=text]").val();
+
+			});
+			
+		});
+	</script>
+{%endblock%}	

@@ -1,0 +1,17 @@
+{%extends 'accounts/others/profile.html'%}
+{%block content%}
+<h3>Following</h3>
+{%if result.userprofile.follow.all%}
+	{%for f in result.userprofile.follow.all%}
+		<div>
+			<h3><b>{{f}}</b></h3>
+		</div>
+	{%endfor%}
+{%else%}
+	<h4>No Following Yet</h4>
+{%endif%}	
+{%endblock%}
+
+				
+					
+				

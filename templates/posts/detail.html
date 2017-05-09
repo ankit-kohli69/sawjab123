@@ -1,0 +1,13 @@
+{%extends 'master.html'%}
+{%block title%}
+	{{block.super}} | {{title}}
+{%endblock%}
+{%block body%}
+	{%include 'includes/header.html'%}
+	{%include 'includes/message.html'%}
+	<h2>{{object.title}}</h2>
+	<p>{{object.content}}</p>
+	<p>{{object.updated}}</p>
+	<p>{{object.timestamp}}</p>
+	<a href='{%url "posts:update" object.id%}'>Update</a>&nbsp;&nbsp;<a href='{%url "posts:delete" object.id%}'>Delete</a>
+{%endblock%}		

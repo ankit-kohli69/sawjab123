@@ -1,0 +1,16 @@
+{%extends 'accounts/user/profile.html'%}
+{%block content%}
+{%if answers%}
+<h3>Answers Submitted By You</h3>
+	{%for a in answers%}
+		<div>
+			<h3><b>{{a.question}}</b></h3>
+			<p>{{a.content}}</p>
+		</div>
+	{%endfor%}
+{%else%}
+	<div><h3>You have not submit any answer yet!</h3></div>
+{%endif%}	
+{%endblock%}								
+					
+				

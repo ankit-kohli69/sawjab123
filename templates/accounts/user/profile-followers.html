@@ -1,0 +1,17 @@
+{%extends 'accounts/user/profile.html'%}
+{%block content%}
+<h3>Followers</h3>
+{%if followers%}
+	{%for f in followers%}
+		<div>
+			<h3><b>{{f.user_from}}</b></h3>
+		</div>
+	{%endfor%}
+{%else%}
+	<h4>No Followers Yet</h4>
+{%endif%}	
+{%endblock%}
+
+				
+					
+				

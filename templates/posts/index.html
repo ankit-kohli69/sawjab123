@@ -1,0 +1,10 @@
+{%extends 'master.html'%}
+{%block title%}
+	{{block.super}} | {{title}}
+{%endblock%}
+{%block body%}
+	{%for post in posts%}
+		<h3><a href="{%url 'posts:detail' post.id%}">{{post.title}}</a></h3>
+		<p>{{post.content}}</p>
+	{%endfor%}
+{%endblock%}		

@@ -1,0 +1,25 @@
+.register-box{
+	border:2px solid #FF8432;
+	padding-bottom:15px;
+	width:auto;
+	border-radius:5px; 
+}
+.login-button:hover{
+	color:#fff;
+	background: #FF8432;
+	border:1px solid #FF8432;
+}
+.social-site{
+	width:200px;
+	padding:10px;
+	color:#fff;
+	border:none;
+	font-weight:bold;
+	border-radius:5px;
+}
+.social-site.google{
+	background: #df4930;
+}
+.social-site.facebook{
+	background: #507cc0;
+}

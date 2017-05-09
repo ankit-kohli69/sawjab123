@@ -1,0 +1,16 @@
+{%extends 'master.html'%}
+{%block title%}
+	{{block.super}} 
+{%endblock%}
+
+{%block body%}
+<h3>{{question}}</h3>
+{%if lans%}
+	{%for obj in lans%}
+		<h3><b>{{obj.question.title}}</b></h3>
+		<h5>Answered By <b><a href="{%url 'accounts:profile' obj.user_id%}">{{obj.user_id}}</a></b></h5>
+		<p>{{obj.content}}</p>
+		<p><a href="#" class="like" data-id={{obj.id}}>{{obj.likes.count}}</a></p>
+	{%endfor%}	
+{%endif%}	
+{%endblock%}

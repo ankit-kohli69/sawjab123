@@ -1,0 +1,7 @@
+{%extends 'master.html'%}
+{%block body%}
+	<h1>About</h1>
+	{% if user.is_authenticated%}
+		<p>auth</p>
+	{%endif%}
+{%endblock%}

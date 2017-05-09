@@ -1,0 +1,17 @@
+{%extends 'master.html'%}
+{%block title%}
+	{{block.super}} | {{title}}
+{%endblock%}
+{%block body%}
+	<h1>{{title}}</h1>
+	
+	<form method='post'>{%csrf_token%}
+		{{user_form.as_p}}
+		<input type='submit' name="user_submit" value='{{title}}'>
+	</form>
+
+	<form method='post' enctype="multipart/form-data">{%csrf_token%}
+		{{profile.as_p}}
+		<input type='submit' name="profile_submit" value='{{title}}'>
+	</form>
+{%endblock%}	

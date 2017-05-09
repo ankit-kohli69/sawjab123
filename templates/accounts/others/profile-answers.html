@@ -1,0 +1,14 @@
+{%extends 'accounts/others/profile.html'%}
+{%block content%}
+{%if answers%}
+<h3>Answers Submitted</h3>
+	{%for a in answers%}
+		<div>
+			<h3><b>{{a.question}}</b></h3>
+			<p>{{a.content}}</p>
+		</div>
+	{%endfor%}
+{%else%}
+	<div><h3>{{result}},has not submit any answer yet!</h3></div>
+{%endif%}	
+{%endblock%}				

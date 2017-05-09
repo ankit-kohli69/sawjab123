@@ -1,0 +1,12 @@
+{%extends 'master.html'%}
+{%block title%}
+	{{block.super}} | {{title}}
+{%endblock%}
+{%block body%}
+	{%include 'includes/header.html'%}
+	<h1>Form</h1>
+	<form action='' method='post'>{%csrf_token%}
+		{{form.as_p}}
+		<input type='submit' value='{{title}} Post'>
+	</form>
+{%endblock%}

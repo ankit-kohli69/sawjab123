@@ -1,0 +1,15 @@
+{%extends 'master.html'%}
+{%block title%}
+	{{block.super}} | {{title}}
+{%endblock%}
+{%block body%}
+{%if results%}
+<h2>{{title}}</h2>
+	{%for obj in results%}
+		<h3>{{obj.title}}</h3>
+	{%endfor%}
+{%else%}
+	<p>{{count}}</p>
+	<h3>You have not asked any question yet!</h3>	
+{%endif%}	
+{%endblock%}

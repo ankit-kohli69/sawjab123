@@ -1,0 +1,49 @@
+{%extends 'master.html'%}
+{%block title%}
+	{{block.super}} | {{title}}
+{%endblock%}
+{%block body%}
+<div class="container-fluid">
+	<div class="row">
+		<div class="col-md-9 col-md-offset-3">
+			{%for obj in results%}
+				<h3><a href="{% url 'main:answer_all' obj.id %}">{{obj.title}}</a><br><h5>Asked by <a href="{%url 'accounts:profile' obj.user%}">{{obj.user}}</a></h5></h3>
+				<h6>{{obj.timestamp}}</h6>
+				<a class="btn btn-sm btn-default" href="{%url 'main:answer_create' obj.id%}">Answer</a>&nbsp;&nbsp;<h6 style="display:inline;"><a class="follow" id="{{obj.id}}" data-id="{{obj.id}}" data-action="{%if user in obj.followers.all%}un{%endif%}follow" href="#">
+				{%if user in obj.followers.all%}	
+					Unfollow
+				{%else%}
+					Follow
+				{%endif%}
+				({{obj.followers.count}})</a></h6><br>
+			{%empty%}
+				<h3>No asked question yet!</h3>	
+			{%endfor%}
+		</div>
+	</div>
+</div>	
+{%endblock%}
+{%block scripts%}			
+	<script>
+		$(document).ready(function(){
+			$("a.follow").click(function(e){
+				e.preventDefault();
+				id=$(this).data('id');
+				action=$(this).data('action');
+				$.ajax({
+					url:"{%url 'main:question_followers'%}",
+					method:"get",
+					data:{id:id,action:action},
+					success:function(data){
+						if(data["status"]="ok")
+						{
+							$("a.follow#"+id).data("action",action=="follow"?"unfollow":"follow");
+							$("a.follow#"+id).text(action=="follow"?"Unfollow("+data["count"]+")":"Follow("+data["count"]+")");
+						}
+					}
+				})
+			});
+			
+		});
+	</script>
+{%endblock%}

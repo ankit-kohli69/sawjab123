@@ -1,0 +1,98 @@
+{%extends 'master.html'%}
+{%block stylesheets%}
+<style>
+.search-box{
+			width:513px;
+			height:auto;
+			background: #fff;
+			position:absolute;
+			margin:0;
+			border-radius:5px;
+			padding:0;
+			z-index:100;
+		}
+		ul.search-box li{
+			list-style: none;
+			line-height:25px;
+			border-top:1px solid #000;
+			margin:0;
+			padding:2.5px 10px 2.5px 10px;
+		}
+		#dialog-box{
+		    background:#000000;
+		    opacity: 0.8;
+		    width:100%;
+		    height:100%;
+		    z-index:10;
+		    position:fixed;
+		    top:0;
+		    left:0;
+		    display:none;
+		}
+</style>		
+{%endblock%}
+{%block body%}
+		<div id="dialog-box"></div>
+		<div class="container">
+			<div class="row">
+				<div class="col-md-3">
+					{%if result.userprofile.image%}
+					<img src="{{result.userprofile.image}}" width="170" height="170" style="border-radius:100%">
+					{%else%}
+					<img src="/media/profile_image/noimage.jpg" width="170" height="170" style="border-radius:100%">
+					{%endif%}	
+					<button class="btn btn-default follow" data-id="{{result.id}}" data-action="{%if result.userprofile in user.userprofile.follow.all%}un{%endif%}follow">
+					{%if result.userprofile in user.userprofile.follow.all%}	
+						Unfollow
+					{%else%}
+						Follow
+					{%endif%}
+					</button>
+					<h4>{{result}}</h4>
+					{%if result.first_name and result.last_name%}
+						<h3>{{result.first_name}} {{result.last_name}}</h3>
+					{%endif%}
+					{%if result.description%}
+						<p>{{result.userprofile.description}}</p>
+					{%endif%}
+					{%if result.userprofile.website%}
+						<p>{{result.userprofile.website}}</p>
+					{%endif%}
+					{%if result.userprofile.city and result.userprofile.location%}
+						<p>From {{result.userprofile.city}},{{result.userprofile.location}}</p>
+					{%endif%}
+					<p><a href="{%url 'accounts:profile' result%}">Answers({{count.answers}})</a></p>
+					<p><a href="{%url 'accounts:profile-questions' result%}">Questions({{count.questions}})</a></p>
+					<p><a href="{%url 'accounts:profile-following' result%}">Following({{result.userprofile.follow.count}})</a></p>
+					<p class="count-followers"><a href="{%url 'accounts:profile-followers' result%}">Followers({{count.followers}})</a></p>
+				</div>
+				<div class="col-md-9">
+					{%block content%}{%endblock%}
+				</div>
+			</div>
+		</div>		
+{%endblock%}
+{%block scripts%}			
+	<script>
+		$(document).ready(function(){
+			$("button.follow").click(function(e){
+				e.preventDefault();
+				$.ajax({
+					url:"{%url 'accounts:follow'%}",
+					method:"get",
+					data:{id:$(this).data('id'),action:$(this).data('action')},
+					success:function(data){
+						if(data["status"]="ok")
+						{
+							var prev_action=$("button.follow").data("action");
+							$("button.follow").data("action",prev_action=="follow"?"unfollow":"follow");
+							$("button.follow").text(prev_action=="follow"?"Unfollow":"Follow");
+							$("p.count-followers").text("Followers("+data["followers"]+")");
+						}
+					}
+				})
+			});
+			
+		});
+	</script>
+{%endblock%}
